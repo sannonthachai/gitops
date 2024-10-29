@@ -1,0 +1,14 @@
+apiVersion: external-secrets.io/v1beta1
+kind: SecretStore
+metadata:
+  name: vault-backend
+spec:
+  provider:
+    vault:
+      server: "http://192.168.12.105:8200"
+      path: "test"
+      version: "v2"
+      auth:
+        tokenSecretRef:
+          name: vault-container-secret
+          key: "VAULT_TOKEN"

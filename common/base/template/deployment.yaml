@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    #secret.reloader.stakater.com/reload: "vault-container-secret,dotnetcert-secret-env,RPC_NAME-secret-env"
+    secret.reloader.stakater.com/reload: "vault-container-secret,dotnetcert-secret-env"
+    configmap.reloader.stakater.com/reload: "generic-config"
+
+  name: RPC_NAME
+  labels:
+    app: RPC_NAME
+spec:
+  selector:
+    matchLabels:
+      app: RPC_NAME
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: RPC_NAME
+        group: RPC_PROJ
+        team: RPC_SUB_GROUP
+    spec:
+      terminationGracePeriodSeconds: 75
+      containers:
+        - name: RPC_NAME
+          image: RPC_REAL_NAME-image
+          imagePullPolicy: IfNotPresent
+            #command: [ "tail" ]
+            #args: ["-f", "/dev/null"]
+          ports:
+            - name: http-port
+              containerPort: 80
+          livenessProbe:
+            failureThreshold: 2
+            httpGet:
+              path: /_health
+              port: http-port
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /_health
+              port: http-port
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh","-c","sleep 10"]
+          resources:
+            requests:
+              cpu: "3m"
+              memory: "50Mi"
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: APP_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['app']
+            - name: TEAM_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['team']
+            - name: GROUP_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['group']
+          envFrom:
+            - configMapRef:
+                name: RPC_NAME-config-env
+            - configMapRef:
+                name: generic-config
+                  #            - secretRef:
+                  #                name: RPC_NAME-secret-env
+            - secretRef:
+                name: vault-container-secret
+          volumeMounts:
+            - mountPath: /app/certs/certificate.pfx
+              name: dotnet
+              subPath: certificate.pfx
+      volumes:
+        - name: dotnet
+          secret:
+            secretName: dotnetcert-secret-env

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: generic-config
+data:
+  ENV: dev
+  SKIP_VAULT: "false"
+  TZ: Asia/Bangkok
