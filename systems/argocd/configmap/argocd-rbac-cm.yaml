@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-rbac-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  policy.csv: |
+    # Allow Group inventory to access Project inventory only
+    p, role:inventory-user, applications, get, inventory/*
+    p, role:inventory-user, applications, sync, inventory/*
+    g, inventory, role:inventory-user
+
+    g, system, role:admin
+  policy.default: role:readonly

@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: test
+  name: system
   namespace: argocd
 spec:
   destination:
     server: https://kubernetes.default.svc
-  project: development
+  project: system
   source:
-    path: overlays/test
+    path: overlays/system
     repoURL: # Url to gitops repository
     targetRevision: HEAD
   syncPolicy:

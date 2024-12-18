@@ -1,0 +1,11 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: system
+  namespace: argocd
+spec:
+  sourceRepos:
+  - # Url to gitops repository
+  destinations:
+  - namespace: system
+    server: https://kubernetes.default.svc

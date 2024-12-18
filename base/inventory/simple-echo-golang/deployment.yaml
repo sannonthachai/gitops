@@ -13,14 +13,15 @@ spec:
     metadata:
       labels:
         app: simple-echo-golang
-        group: test
+        group: inventory
+        team: inventory
         app-language: golang
         app-type: backend
     spec:
       terminationGracePeriodSeconds: 75
       containers:
         - name: simple-echo-golang
-          image: simple-echo-golang-image
+          image: sannonthachai/simple-echo-golang
           imagePullPolicy: IfNotPresent
           ports:
             - name: http-port

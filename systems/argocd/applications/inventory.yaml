@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: system
+  name: inventory
   namespace: argocd
 spec:
   destination:
     server: https://kubernetes.default.svc
-  project: development
+  project: inventory
   source:
-    path: overlays/system
+    path: overlays/inventory
     repoURL: # Url to gitops repository
     targetRevision: HEAD
   syncPolicy:

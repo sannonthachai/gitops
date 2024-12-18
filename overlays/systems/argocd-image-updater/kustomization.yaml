@@ -4,7 +4,7 @@ namespace: argocd
 
 resources:
 - namespace.yaml
-- ../../base/argocd-image-updater
+- ../../../base/systems/argocd-image-updater
 
 patchesStrategicMerge:
 - container-image-pull.secret.yml
