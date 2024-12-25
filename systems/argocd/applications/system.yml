@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: system
   namespace: argocd
+  annotations:
+    notifications.argoproj.io/subscribe.on-deployed.slack: # Slack Chanel
+    notifications.argoproj.io/subscribe.on-health-degraded.slack: # Slack Chanel
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: # Slack Chanel
 spec:
   destination:
     server: https://kubernetes.default.svc
