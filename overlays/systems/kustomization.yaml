@@ -4,5 +4,7 @@ resources:
 - argocd-image-updater
 - descheduler
 images:
-- name: argoprojlabs/argocd-image-updater
-  newTag: v0.11.0
+- name: quay.io/argoprojlabs/argocd-image-updater
+  newTag: v0.15.1
+- name: registry.k8s.io/descheduler/descheduler
+  newTag: v0.31.0
