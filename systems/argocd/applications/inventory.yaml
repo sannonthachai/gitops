@@ -7,6 +7,13 @@ metadata:
     notifications.argoproj.io/subscribe.on-deployed.slack: # Slack Chanel
     notifications.argoproj.io/subscribe.on-health-degraded.slack: # Slack Chanel
     notifications.argoproj.io/subscribe.on-sync-failed.slack: # Slack Chanel
+    argocd-image-updater.argoproj.io/service1.kustomize.image-name: simple-echo-golang-image
+    argocd-image-updater.argoproj.io/service1.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/service1.allow-tags: regexp:^[0-9a-f]{7}$
+    argocd-image-updater.argoproj.io/image-list: service1=sannonthachai/simple-echo-golang:latest
+    argocd-image-updater.argoproj.io/git-branch: dev
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
+    argocd-image-updater.argoproj.io/write-back-target: kustomization
 spec:
   destination:
     server: https://kubernetes.default.svc
