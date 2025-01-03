@@ -2,7 +2,12 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: inventory
 resources:
-- ../../config
+- ../../global/config
+- cronjobs
+- endpoints
+- ingresses
+- secrets
+- secretstore
 - namespace.yaml
 - simple-echo-golang
 images:

@@ -6,7 +6,7 @@ spec:
   provider:
     vault:
       server: "http://192.168.12.105:8200"
-      path: "test"
+      path: "inventory"
       version: "v2"
       auth:
         tokenSecretRef:

@@ -3,8 +3,11 @@ kind: Kustomization
 resources:
 - argocd-image-updater
 - descheduler
+- reloader
 images:
 - name: quay.io/argoprojlabs/argocd-image-updater
   newTag: v0.15.1
 - name: registry.k8s.io/descheduler/descheduler
   newTag: v0.31.0
+- name: ghcr.io/stakater/reloader
+  newTag: v1.2.1
