@@ -9,4 +9,3 @@ resources:
 patchesStrategicMerge:
 - container-image-pull-secret.yml
 - argocd-image-updater-cm.yaml
-- argocd-image-updater-deployment.yaml
