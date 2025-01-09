@@ -109,11 +109,11 @@ echo "$ARGOCD_SERVICE" >> systems/argocd/$ENV_NAME/$GROUP_NAME/service_list
 
 #echo 6. Update argocd
 #mkdir -p systems/argocd/$ENV_NAME/$GROUP_NAME
-#sh systems/argocd/append.sh $ENV_NAME $GROUP_NAME > systems/argocd/$ENV_NAME/$GROUP_NAME/$GROUP_NAME.yml
+#sh systems/argocd/append.sh $ENV_NAME $GROUP_NAME > systems/argocd/$ENV_NAME/$GROUP_NAME/$GROUP_NAME.yaml
 #git add systems/argocd/$ENV_NAME
 #git status
 #git commit -a -m "feat: add new service $NEW_SERVICE"
 #git log --stat -n 1
 
-echo "Run apply systems/argocd/sit/iden.yml"
-echo kubectl -n argocd apply -f systems/argocd/$ENV_NAME/$GROUP_NAME.yml
+echo "Run apply systems/argocd/sit/iden.yaml"
+echo kubectl -n argocd apply -f systems/argocd/$ENV_NAME/$GROUP_NAME.yaml

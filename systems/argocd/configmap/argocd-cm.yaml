@@ -9,13 +9,14 @@ metadata:
 data:
   dex.config: |
     connectors:
-    - type: github
-      id: github
-      name: GitHub
+    - type: gitlab
+      id: gitlab
+      name: GitLab
       config:
+        baseURL: http://192.168.242.46
         clientID: 
         clientSecret: 
-        orgs:
-        - name: "DataMorph Collective"
+        redirectURI: http://argocd-dex-server:5556/dex/callback
+        useLoginAsID: false
   url: # Url to argocd
   # exec.enabled: "true" # Enable exec console

@@ -8,7 +8,7 @@ token name: k8s
 $ bash docker-credentials.sh -r 192.168.12.101:5050  -u k8s -p "<TOKEN>" > docker-config.json
 ```
 
-2. Create secret yml file to apply per namespace
+2. Create secret yaml file to apply per namespace
 
 container-image-pull.secret.yaml
 ```

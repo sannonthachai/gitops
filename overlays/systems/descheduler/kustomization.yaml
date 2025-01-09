@@ -6,4 +6,4 @@ resources:
 - ../../../base/systems/descheduler
 
 patchesStrategicMerge:
-- configmap.yml
+- configmap.yaml
