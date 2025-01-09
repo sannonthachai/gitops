@@ -11,6 +11,8 @@ data:
       - name: ProfileName
         pluginConfig:
         - name: "DefaultEvictor"
+          args:
+            nodeFit: true
         - name: "RemoveDuplicates"
         - name: "LowNodeUtilization"
           args:
