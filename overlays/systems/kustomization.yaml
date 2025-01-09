@@ -5,14 +5,23 @@ resources:
 # - reloader
 - descheduler
 - prometheus
+# - event-exporter
 images:
-# - name: quay.io/argoprojlabs/argocd-image-updater
+# - name: argocd-image-updater
+#   newName: quay.io/argoprojlabs/argocd-image-updater
 #   newTag: v0.15.1
-# - name: ghcr.io/stakater/reloader
+# - name: reloader
+#   newName: ghcr.io/stakater/reloader
 #   newTag: v1.2.1
-- name: registry.k8s.io/descheduler/descheduler
+- name: descheduler
+  newName: registry.k8s.io/descheduler/descheduler
   newTag: v0.31.0
-- name: quay.io/prometheus/node-exporter
+- name: node-exporter
+  newName: quay.io/prometheus/node-exporter
   newTag: v1.8.2
-- name: quay.io/brancz/kube-rbac-proxy
+- name: node-exporter/kube-rbac-proxy
+  newName: quay.io/brancz/kube-rbac-proxy
   newTag: v0.18.2
+# - name: event-exporter
+#   newName: ghcr.io/resmoio/kubernetes-event-exporter
+#   newTag: v1.7
