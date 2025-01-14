@@ -13,4 +13,3 @@ data:
     g, EA, role:ea-dev
 
     g, gitops, role:admin
-  policy.default: role:readonly
