@@ -3,9 +3,9 @@ kind: NetworkPolicy
 metadata:
   labels:
     app.kubernetes.io/component: exporter
-    app.kubernetes.io/name: node-exporter
+    app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/part-of: kube-prometheus
-  name: node-exporter
+  name: kube-state-metrics
   namespace: monitoring
 spec:
   egress:
@@ -16,12 +16,14 @@ spec:
         matchLabels:
           app.kubernetes.io/name: prometheus
     ports:
-    - port: 9100
+    - port: 8443
+      protocol: TCP
+    - port: 9443
       protocol: TCP
   podSelector:
     matchLabels:
       app.kubernetes.io/component: exporter
-      app.kubernetes.io/name: node-exporter
+      app.kubernetes.io/name: kube-state-metrics
       app.kubernetes.io/part-of: kube-prometheus
   policyTypes:
   - Egress

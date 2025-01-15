@@ -3,7 +3,8 @@ kind: Application
 metadata:
   name: system
   namespace: argocd
-  # annotations:
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
   #   notifications.argoproj.io/subscribe.on-deployed.slack: # Slack Chanel
   #   notifications.argoproj.io/subscribe.on-health-degraded.slack: # Slack Chanel
   #   notifications.argoproj.io/subscribe.on-sync-failed.slack: # Slack Chanel
@@ -19,3 +20,4 @@ spec:
     automated: {}
     syncOptions:
     - Prune=False
+    - ServerSideApply=true

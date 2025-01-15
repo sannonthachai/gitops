@@ -8,4 +8,5 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   redis.server: argocd-redis-ha-haproxy:6379
-  # server.insecure: "true"
+  server.insecure: "true"
+  controller.diff.server.side: "true"

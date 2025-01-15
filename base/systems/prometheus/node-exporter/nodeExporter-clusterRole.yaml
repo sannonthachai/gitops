@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/name: node-exporter
     app.kubernetes.io/part-of: kube-prometheus
   name: node-exporter
+  namespace: monitoring
 rules:
 - apiGroups:
   - authentication.k8s.io

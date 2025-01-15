@@ -1,8 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: monitoring
 
 resources:
 - namespace.yaml
 - ../../../base/systems/prometheus/crds
+- ../../../base/systems/prometheus/alertmanager
+- ../../../base/systems/prometheus/kube
 - ../../../base/systems/prometheus/node-exporter
+- ../../../base/systems/prometheus/operator
+- ../../../base/systems/prometheus/prometheus

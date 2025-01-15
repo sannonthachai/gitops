@@ -3,17 +3,20 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/component: exporter
-    app.kubernetes.io/name: node-exporter
+    app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/part-of: kube-prometheus
-  name: node-exporter
+  name: kube-state-metrics
   namespace: monitoring
 spec:
   clusterIP: None
   ports:
-  - name: https
-    port: 9100
-    targetPort: https
+  - name: https-main
+    port: 8443
+    targetPort: https-main
+  - name: https-self
+    port: 9443
+    targetPort: https-self
   selector:
     app.kubernetes.io/component: exporter
-    app.kubernetes.io/name: node-exporter
+    app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/part-of: kube-prometheus
