@@ -25327,9 +25327,6 @@ spec:
       containers:
       - args:
         - /usr/local/bin/argocd-applicationset-controller
-        resources:
-          requests:
-            memory: "300Mi"
         env:
         - name: ARGOCD_APPLICATIONSET_CONTROLLER_GLOBAL_PRESERVED_ANNOTATIONS
           valueFrom:
@@ -26653,6 +26650,9 @@ spec:
       containers:
       - args:
         - /usr/local/bin/argocd-application-controller
+        resources:
+          requests:
+            memory: "300Mi"
         env:
         - name: REDIS_PASSWORD
           valueFrom:

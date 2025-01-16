@@ -33,7 +33,7 @@ spec:
   replicas: 1
   resources:
     requests:
-      memory: 400Mi
+      memory: 1Gi
   ruleNamespaceSelector: {}
   ruleSelector: {}
   scrapeConfigNamespaceSelector: {}
