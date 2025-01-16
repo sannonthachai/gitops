@@ -6,6 +6,7 @@ resources:
 - descheduler
 - prometheus
 # - event-exporter
+# - elk
 images:
 # - name: argocd-image-updater
 #   newName: quay.io/argoprojlabs/argocd-image-updater
@@ -37,3 +38,6 @@ images:
 # - name: event-exporter
 #   newName: ghcr.io/resmoio/kubernetes-event-exporter
 #   newTag: v1.7
+# - name: elk/filebeat
+#   newName: docker.elastic.co/beats/filebeat-wolfi
+#   newTag: 8.17.1

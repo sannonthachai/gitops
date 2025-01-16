@@ -14,9 +14,41 @@ data:
           args:
             nodeFit: true
         - name: "RemoveDuplicates"
+          args:
+            namespaces:
+              exclude:
+              - "cattle-fleet-system"
+              - "cattle-impersonation-system"
+              - "cattle-logging-system"
+              - "cattle-system"
+              - "kube-node-lease"
+              - "kube-public"
+              - "kube-system"
+              - "longhorn-system"
         - name: "RemovePodsViolatingInterPodAntiAffinity"
+          args:
+            namespaces:
+              exclude:
+              - "cattle-fleet-system"
+              - "cattle-impersonation-system"
+              - "cattle-logging-system"
+              - "cattle-system"
+              - "kube-node-lease"
+              - "kube-public"
+              - "kube-system"
+              - "longhorn-system"
         - name: "RemovePodsViolatingNodeAffinity"
           args:
+            namespaces:
+              exclude:
+              - "cattle-fleet-system"
+              - "cattle-impersonation-system"
+              - "cattle-logging-system"
+              - "cattle-system"
+              - "kube-node-lease"
+              - "kube-public"
+              - "kube-system"
+              - "longhorn-system"
             nodeAffinityType:
             - "requiredDuringSchedulingIgnoredDuringExecution"
         - name: "LowNodeUtilization"
@@ -27,6 +59,16 @@ data:
             targetThresholds:
               "cpu": 50
               "memory": 50
+            evictableNamespaces:
+              exclude:
+              - "cattle-fleet-system"
+              - "cattle-impersonation-system"
+              - "cattle-logging-system"
+              - "cattle-system"
+              - "kube-node-lease"
+              - "kube-public"
+              - "kube-system"
+              - "longhorn-system"
         plugins:
           deschedule:
             enabled:
