@@ -7,3 +7,9 @@ spec:
   additionalScrapeConfigs:
     name: additional-scrape-configs
     key: additional-scrape-configs.yaml
+  volumes:
+  - name: pvc-prometheus-k8s
+    persistentVolumeClaim:
+      claimName: pvc-prometheus-k8s
+  retention: 2d
+  replicas: 1
