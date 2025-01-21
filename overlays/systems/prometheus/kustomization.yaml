@@ -3,9 +3,10 @@ kind: Kustomization
 
 resources:
 - namespace.yaml
+- configs
+- patches
 - ../../../base/systems/prometheus/crds
 - ../../../base/systems/prometheus/alertmanager
 - ../../../base/systems/prometheus/kube
 - ../../../base/systems/prometheus/node-exporter
 - ../../../base/systems/prometheus/operator
-- ../../../base/systems/prometheus/prometheus
