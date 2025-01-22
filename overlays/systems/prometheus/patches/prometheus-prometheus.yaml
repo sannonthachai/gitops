@@ -7,9 +7,13 @@ spec:
   additionalScrapeConfigs:
     name: additional-scrape-configs
     key: additional-scrape-configs.yaml
-  volumes:
-  - name: pvc-prometheus-k8s
-    persistentVolumeClaim:
-      claimName: pvc-prometheus-k8s
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: longhorn
+        accessModes: ["ReadWriteOnce"]
+        resources:
+            requests:
+              storage: 10Gi
   retention: 2d
   replicas: 1
