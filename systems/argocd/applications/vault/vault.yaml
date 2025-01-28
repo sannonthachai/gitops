@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: argocd
+  # annotations:
+  #   argocd.argoproj.io/compare-options: ServerSideDiff=true
+  #   notifications.argoproj.io/subscribe.on-deployed.slack: # Slack Chanel
+  #   notifications.argoproj.io/subscribe.on-health-degraded.slack: # Slack Chanel
+  #   notifications.argoproj.io/subscribe.on-sync-failed.slack: # Slack Chanel
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: vault
+    repoURL: https://helm.releases.hashicorp.com
+    targetRevision: 0.29.1
+    helm:
+      valuesObject:
+        global:
+          namespace: "vault"
+        injector:
+          image:
+            repository: "hashicorp/vault-k8s"
+            tag: "1.5.0"
+            pullPolicy: IfNotPresent
+        server:
+          image:
+            repository: "hashicorp/vault"
+            tag: "1.18.1"
+            # Overrides the default Image Pull Policy
+            pullPolicy: IfNotPresent
+          service:
+            type: NodePort
+            nodePort: 31290
+          dataStorage:
+            size: 5Gi
+            storageClass: "longhorn"
+          auditStorage:
+            enabled: true
+            size: 5Gi
+            storageClass: "longhorn"
+        csi:
+          enabled: true
+          image:
+            repository: "hashicorp/vault-csi-provider"
+            tag: "1.5.0"
+            pullPolicy: IfNotPresent
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - Prune=False
