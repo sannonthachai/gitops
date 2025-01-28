@@ -54,11 +54,9 @@ data:
         - name: "LowNodeUtilization"
           args:
             thresholds:
-              "cpu": 30
-              "memory": 30
+              "memory": 15
             targetThresholds:
-              "cpu": 50
-              "memory": 50
+              "memory": 45
             evictableNamespaces:
               exclude:
               - "cattle-fleet-system"
