@@ -3,7 +3,7 @@ kind: Kustomization
 
 patchesStrategicMerge:
 - prometheus-service.yaml
-# - prometheus-networkPolicy.yaml # For NodePort Service
+- prometheus-networkPolicy.yaml
 - prometheus-prometheus.yaml
 
 resources:

@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
 - secrets
-- patches
+- prometheus-patch
 - ../../../base/systems/prometheus/crds
 - ../../../base/systems/prometheus/alertmanager
 - ../../../base/systems/prometheus/kube

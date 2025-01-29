@@ -6,6 +6,7 @@ resources:
 # - argocd-image-updater
 - descheduler
 - prometheus
+- vault-secrets-operator
 # - event-exporter
 # - elk
 images:
@@ -36,6 +37,9 @@ images:
 - name: prom/kube-rbac-proxy
   newName: quay.io/brancz/kube-rbac-proxy
   newTag: v0.18.2
+- name: vault-secrets-operator
+  newName: hashicorp/vault-secrets-operator
+  newTag: 0.9.1
 # - name: event-exporter
 #   newName: ghcr.io/resmoio/kubernetes-event-exporter
 #   newTag: v1.7
