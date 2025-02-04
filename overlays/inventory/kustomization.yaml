@@ -6,8 +6,6 @@ resources:
 - cronjobs
 - endpoints
 - ingresses
-- secrets
-- secretstore
 - namespace.yaml
 - simple-echo-golang
 images:
