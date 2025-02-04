@@ -5,3 +5,5 @@ resources:
 - argocd.yaml
 - vault.yaml
 - monitoring.yaml
+- inventory.yaml
+- vault-secrets-operator.yaml

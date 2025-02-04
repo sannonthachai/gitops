@@ -1,0 +1,10 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: vault-auth
+spec:
+  kubernetes:
+    role: vault-secrets-inventory
+    serviceAccount: vault-secrets-inventory
+    audiences:
+      - vault

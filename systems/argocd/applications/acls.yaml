@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: system
+  name: acls
   namespace: argocd
   annotations:
     argocd.argoproj.io/compare-options: ServerSideDiff=true
@@ -13,7 +13,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: overlays/systems
+    path: overlays/acls
     repoURL: # Url to gitops repository
     targetRevision: HEAD
   syncPolicy:
