@@ -15,6 +15,6 @@ data:
       - name: "dump"
         elasticsearch:
           hosts:
-            - # IP
+            - http://192.168.16.81:32827
           index: kube-events
           indexFormat: "kube-events-{2006-01-02}"

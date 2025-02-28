@@ -1,0 +1,82 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+  #   notifications.argoproj.io/subscribe.on-deployed.slack: # Slack Chanel
+  #   notifications.argoproj.io/subscribe.on-health-degraded.slack: # Slack Chanel
+  #   notifications.argoproj.io/subscribe.on-sync-failed.slack: # Slack Chanel
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  project: default
+  source:
+    chart: prometheus
+    repoURL: https://prometheus-community.github.io/helm-charts
+    targetRevision: 27.5.0
+    helm:
+      valuesObject:
+        server:
+          persistentVolume:
+            size: 10Gi
+            storageClass: longhorn
+          service:
+            type: NodePort
+            nodePort: 31175
+          # retention: 15d
+          retentionSize: 8GB
+          resources:
+            requests:
+              memory: 1Gi
+        extraScrapeConfigs: |
+          - job_name: 'ingress-nginx-endpoints'
+            kubernetes_sd_configs:
+            - role: pod
+              namespaces:
+                names:
+                - ingress-nginx
+            relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: true
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
+              action: replace
+              target_label: __scheme__
+              regex: (https?)
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+              action: replace
+              target_label: __address__
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+            - source_labels: [__meta_kubernetes_service_name]
+              regex: prometheus
+              action: drop
+        alertmanager:
+          enabled: false
+        prometheus-pushgateway:
+          enabled: false
+        prometheus-node-exporter:
+          tolerations:
+            - key: "node-role.kubernetes.io/controlplane"
+              operator: "Equal"
+              value: "true"
+              effect: "NoSchedule"
+            - key: "node-role.kubernetes.io/etcd"
+              operator: "Equal"
+              value: "true"
+              effect: "NoExecute"
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - Prune=False
+    - ServerSideApply=true
+    - CreateNamespace=true

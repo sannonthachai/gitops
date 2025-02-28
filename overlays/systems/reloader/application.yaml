@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: reloader
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+  #   notifications.argoproj.io/subscribe.on-deployed.slack: # Slack Chanel
+  #   notifications.argoproj.io/subscribe.on-health-degraded.slack: # Slack Chanel
+  #   notifications.argoproj.io/subscribe.on-sync-failed.slack: # Slack Chanel
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  project: default
+  source:
+    chart: reloader
+    repoURL: https://stakater.github.io/stakater-charts
+    targetRevision: 1.3.0
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - Prune=False
+    - ServerSideApply=true

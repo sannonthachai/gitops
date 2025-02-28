@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  dex.config: |
+    connectors:
+    - type: gitlab
+      id: gitlab
+      name: GitLab
+      config:
+        baseURL: http://192.168.242.46
+        clientID: $argocd-config-credential:clientID
+        clientSecret: $argocd-config-credential:clientSecret
+        useLoginAsID: false
+  url: http://192.168.242.151:30945
+  # exec.enabled: "true" # Enable exec console

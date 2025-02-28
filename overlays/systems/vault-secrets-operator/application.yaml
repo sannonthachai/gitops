@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault-secrets-operator
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+  #   notifications.argoproj.io/subscribe.on-deployed.slack: # Slack Chanel
+  #   notifications.argoproj.io/subscribe.on-health-degraded.slack: # Slack Chanel
+  #   notifications.argoproj.io/subscribe.on-sync-failed.slack: # Slack Chanel
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: vault-secrets-operator-system
+  project: default
+  source:
+    chart: vault-secrets-operator
+    repoURL: https://helm.releases.hashicorp.com
+    targetRevision: 0.9.1
+    helm:
+      valuesObject:
+        defaultVaultConnection:
+          enabled: true
+          address: "http://vault.vault.svc.cluster.local:8200"
+          skipTLSVerify: false
+        hooks:
+          upgradeCRDs:
+            enabled: false
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - Prune=False
+    - ServerSideApply=true
+    - CreateNamespace=true
