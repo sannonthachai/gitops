@@ -10,3 +10,4 @@ resources:
 - vault
 - vault-secrets-operator
 - redis
+- redis-insight
