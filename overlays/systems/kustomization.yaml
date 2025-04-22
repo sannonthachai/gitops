@@ -9,3 +9,4 @@ resources:
 - reloader
 - vault
 - vault-secrets-operator
+- redis
