@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-image-updater
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+    # notifications.argoproj.io/subscribe.on-deployed.slack: # Slack Chanel
+    # notifications.argoproj.io/subscribe.on-health-degraded.slack: # Slack Chanel
+    # notifications.argoproj.io/subscribe.on-sync-failed.slack: # Slack Chanel
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  project: default
+  source:
+    path: overlays/systems/argocd-image-updater/overlay
+    repoURL: http://192.168.242.46/gitops/gitops.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true

@@ -15,8 +15,8 @@ data:
   registries.conf: |
     registries:
     - name: GitLab Container Registry
-      api_url: http://192.168.12.101:5050
-      prefix: 192.168.12.101:5050
+      api_url: http://registry.gitlab.com
+      prefix: registry.gitlab.com
       ping: yes
-      insecure: true
+      insecure: false
       credentials: pullsecret:argocd/docker-register-pull-secret
