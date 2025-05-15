@@ -27,8 +27,9 @@ spec:
         replica:
           replicaCount: 1
   syncPolicy:
-    automated: {}
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
-    - Prune=False
-    - ServerSideApply=true
-    - CreateNamespace=true
+      - ServerSideApply=true
+      - CreateNamespace=true

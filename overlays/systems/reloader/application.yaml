@@ -20,7 +20,9 @@ spec:
     repoURL: https://stakater.github.io/stakater-charts
     targetRevision: 1.3.0
   syncPolicy:
-    automated: {}
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
-    - Prune=False
-    - ServerSideApply=true
+      - ServerSideApply=true
+      - CreateNamespace=true

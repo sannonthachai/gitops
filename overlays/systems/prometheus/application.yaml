@@ -28,7 +28,7 @@ spec:
           service:
             type: NodePort
             nodePort: 31175
-          # retention: 15d
+          retention: 7d
           retentionSize: 8GB
           resources:
             requests:
@@ -75,8 +75,9 @@ spec:
               value: "true"
               effect: "NoExecute"
   syncPolicy:
-    automated: {}
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
-    - Prune=False
-    - ServerSideApply=true
-    - CreateNamespace=true
+      - ServerSideApply=true
+      - CreateNamespace=true

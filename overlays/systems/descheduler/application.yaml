@@ -19,7 +19,9 @@ spec:
     repoURL: http://192.168.242.46/gitops/gitops.git
     targetRevision: HEAD
   syncPolicy:
-    automated: {}
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
-    - Prune=False
-    - ServerSideApply=true
+      - ServerSideApply=true
+      - CreateNamespace=true
