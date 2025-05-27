@@ -7,17 +7,93 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/compare-options: ServerSideDiff=true
-  #   notifications.argoproj.io/subscribe.on-deployed.slack: # Slack Chanel
-  #   notifications.argoproj.io/subscribe.on-health-degraded.slack: # Slack Chanel
-  #   notifications.argoproj.io/subscribe.on-sync-failed.slack: # Slack Chanel
+    notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
 spec:
   destination:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: overlays/systems/descheduler/overlay
-    repoURL: http://192.168.242.46/gitops/gitops.git
-    targetRevision: HEAD
+    chart: descheduler
+    repoURL: https://kubernetes-sigs.github.io/descheduler
+    targetRevision: 0.33.0
+    helm:
+      valuesObject:
+        kind: Deployment
+        resources:
+          requests:
+            memory: 10Mi
+        deschedulerPolicy:
+          profiles:
+            - name: ProfileName
+              pluginConfig:
+              - name: "DefaultEvictor"
+                args:
+                  nodeFit: true
+              - name: "RemoveDuplicates"
+                args:
+                  namespaces:
+                    exclude:
+                    - "cattle-fleet-system"
+                    - "cattle-impersonation-system"
+                    - "cattle-logging-system"
+                    - "cattle-system"
+                    - "kube-node-lease"
+                    - "kube-public"
+                    - "kube-system"
+                    - "longhorn-system"
+              - name: "RemovePodsViolatingInterPodAntiAffinity"
+                args:
+                  namespaces:
+                    exclude:
+                    - "cattle-fleet-system"
+                    - "cattle-impersonation-system"
+                    - "cattle-logging-system"
+                    - "cattle-system"
+                    - "kube-node-lease"
+                    - "kube-public"
+                    - "kube-system"
+                    - "longhorn-system"
+              - name: "RemovePodsViolatingNodeAffinity"
+                args:
+                  namespaces:
+                    exclude:
+                    - "cattle-fleet-system"
+                    - "cattle-impersonation-system"
+                    - "cattle-logging-system"
+                    - "cattle-system"
+                    - "kube-node-lease"
+                    - "kube-public"
+                    - "kube-system"
+                    - "longhorn-system"
+                  nodeAffinityType:
+                  - "requiredDuringSchedulingIgnoredDuringExecution"
+              - name: "LowNodeUtilization"
+                args:
+                  thresholds:
+                    "memory": 35
+                  targetThresholds:
+                    "memory": 65
+                  evictableNamespaces:
+                    exclude:
+                    - "cattle-fleet-system"
+                    - "cattle-impersonation-system"
+                    - "cattle-logging-system"
+                    - "cattle-system"
+                    - "kube-node-lease"
+                    - "kube-public"
+                    - "kube-system"
+                    - "longhorn-system"
+              plugins:
+                deschedule:
+                  enabled:
+                    - "RemovePodsViolatingInterPodAntiAffinity"
+                    - "RemovePodsViolatingNodeAffinity"
+                balance:
+                  enabled:
+                    - "LowNodeUtilization"
+                    - "RemoveDuplicates"
   syncPolicy:
     automated:
       prune: true

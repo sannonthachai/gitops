@@ -3,6 +3,8 @@ kind: Kustomization
 
 resources:
   - ../../../../base/systems/redis-insight
+
+patchesStrategicMerge:
   - service.yaml
 
 images:

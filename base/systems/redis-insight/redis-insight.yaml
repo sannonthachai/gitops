@@ -29,9 +29,8 @@ spec:
         app: redisinsight #label for pod/s
     spec:
       containers:
-
       - name:  redisinsight #Container name (DNS_LABEL, unique)
-        image: redis/redisinsight:latest #repo/image
+        image: redisinsight #repo/image
         imagePullPolicy: IfNotPresent #Installs the latest Redis Insight version
         volumeMounts:
         - name: redisinsight #Pod volumes to mount into the container's filesystem. Cannot be updated.

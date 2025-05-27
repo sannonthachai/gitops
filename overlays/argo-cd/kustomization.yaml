@@ -4,3 +4,6 @@ namespace: argocd
 
 resources:
 - patches
+- service-accounts
+- vault-auth
+- secrets

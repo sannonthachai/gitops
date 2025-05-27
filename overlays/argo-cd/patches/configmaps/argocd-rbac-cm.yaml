@@ -7,8 +7,8 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   policy.csv: |
-    p, role:ea-dev, applications, get, ea/*, allow
-    p, role:ea-dev, applications, sync, ea/*, allow
-    g, ea, role:ea-dev
+    p, role:ea-dev, applications, get, default/ea-cloud, allow
+    p, role:ea-dev, applications, sync, default/ea-cloud, allow
+    g, ea-dev, role:ea-dev
 
-    g, gitops, role:admin
+    g, ea-gitops, role:admin

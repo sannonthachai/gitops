@@ -18,7 +18,7 @@ spec:
   source:
     chart: vault
     repoURL: https://helm.releases.hashicorp.com
-    targetRevision: 0.29.1
+    targetRevision: 0.30.0
     helm:
       valuesObject:
         global:
@@ -30,12 +30,37 @@ spec:
             type: NodePort
             nodePort: 31290
           dataStorage:
-            size: 5Gi
+            size: 2Gi
             storageClass: "longhorn"
           auditStorage:
             enabled: true
-            size: 5Gi
+            size: 2Gi
             storageClass: "longhorn"
+          standalone:
+            enabled: false
+          ha:
+            enabled: true
+            replicas: 2
+            raft:
+              enabled: true
+              setNodeId: true
+              config: |
+                ui = true
+                listener "tcp" {
+                  tls_disable = 1
+                  address = "[::]:8200"
+                  cluster_address = "[::]:8201"
+                }
+
+                storage "raft" {
+                  path = "/vault/data"
+                  retry_join {
+                    leader_api_addr = "http://vault-0.vault-internal:8200"
+                  }
+                  retry_join {
+                    leader_api_addr = "http://vault-1.vault-internal:8200"
+                  }
+                }
   syncPolicy:
     automated:
       prune: true

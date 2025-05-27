@@ -18,14 +18,20 @@ spec:
   source:
     chart: redis
     repoURL: https://charts.bitnami.com/bitnami
-    targetRevision: 20.12.2
+    targetRevision: 21.1.5
     helm:
       valuesObject:
         global:
           storageClass: "longhorn"
-          size: 5Gi
+        master:
+          persistence:
+            storageClass: "longhorn"
+            size: 2Gi
         replica:
-          replicaCount: 1
+          replicaCount: 2
+          persistence:
+            storageClass: "longhorn"
+            size: 2Gi
   syncPolicy:
     automated:
       prune: true
