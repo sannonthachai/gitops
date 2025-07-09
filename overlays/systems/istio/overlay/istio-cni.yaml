@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-cni
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+    # notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  project: default
+  source:
+    chart: cni
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    targetRevision: 1.26.1
+    helm:
+      values: |
+        profile: ambient
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true

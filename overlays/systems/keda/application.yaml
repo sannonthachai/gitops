@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keda
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+    # notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: keda
+  project: default
+  source:
+    chart: keda
+    repoURL: https://kedacore.github.io/charts
+    targetRevision: 2.17.1
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true

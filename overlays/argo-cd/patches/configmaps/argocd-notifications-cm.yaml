@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: argocd-notifications-cm
 data:
-  # service.slack: | # For Slack
+  # service.slack: |
   #   token: $slack-token
   template.app-created: |
     email:

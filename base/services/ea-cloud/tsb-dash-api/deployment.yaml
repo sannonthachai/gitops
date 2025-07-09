@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    reloader.stakater.com/auto: "true"
+  name: tsb-dash-api
+  labels:
+    app: tsb-dash-api
+spec:
+  selector:
+    matchLabels:
+      app: tsb-dash-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tsb-dash-api
+        group: tsb
+        team: devops
+        app-language: golang
+        app-type: backend
+    spec:
+      terminationGracePeriodSeconds: 75
+      containers:
+        - name: tsb-dash-api
+          image: tsb-dash-api-image
+          imagePullPolicy: IfNotPresent
+          command: ["/root/dashboard-cli", "start"]
+          ports:
+            - name: http-port
+              containerPort: 8080
+          livenessProbe:
+            failureThreshold: 2
+            httpGet:
+              path: /healthz
+              port: http-port
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: http-port
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 10"]
+          envFrom:
+            - configMapRef:
+                name: tsb-dash-api-config-env
+            - secretRef:
+                name: tsb-dash-api-secret-env
+      imagePullSecrets:
+        - name: gitlab-auth

@@ -8,7 +8,7 @@ patchesStrategicMerge:
 - configmaps/argocd-rbac-cm.yaml
 - deployments/argocd-server.yaml
 # - secrets/argocd-notifications-secret.yaml
-- services/argocd-server.yaml
+# - services/argocd-server.yaml
 - statefulsets/argocd-application-controller.yaml
 
 resources:

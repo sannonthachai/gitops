@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tsb-dashboard
+  labels:
+    app: tsb-dashboard
+spec:
+  selector:
+    matchLabels:
+      app: tsb-dashboard
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tsb-dashboard
+        group: tsb
+        team: devops
+        app-language: vite-vue-3
+        app-type: frontend
+    spec:
+      terminationGracePeriodSeconds: 75
+      containers:
+        - name: tsb-dashboard
+          image: tsb-dashboard-image
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http-port
+              containerPort: 80
+          livenessProbe:
+            failureThreshold: 2
+            httpGet:
+              path: /healthz
+              port: http-port
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: http-port
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 10"]
+          # envFrom:
+          #   - configMapRef:
+          #       name: generic-config
+      imagePullSecrets:
+        - name: gitlab-auth

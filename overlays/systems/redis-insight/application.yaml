@@ -7,9 +7,9 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/compare-options: ServerSideDiff=true
-  #   notifications.argoproj.io/subscribe.on-deployed.slack: # Slack Chanel
-  #   notifications.argoproj.io/subscribe.on-health-degraded.slack: # Slack Chanel
-  #   notifications.argoproj.io/subscribe.on-sync-failed.slack: # Slack Chanel
+    notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
 spec:
   destination:
     server: https://kubernetes.default.svc
@@ -17,8 +17,8 @@ spec:
   project: default
   source:
     path: overlays/systems/redis-insight/overlay
-    repoURL: http://192.168.242.46/gitops/gitops.git
-    targetRevision: HEAD
+    repoURL: https://gitlab.com/ea-gitops/gitops-poc-huawei.git
+    targetRevision: dev
   syncPolicy:
     automated:
       prune: true

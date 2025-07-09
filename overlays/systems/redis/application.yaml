@@ -7,13 +7,13 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/compare-options: ServerSideDiff=true
-  #   notifications.argoproj.io/subscribe.on-deployed.slack: # Slack Chanel
-  #   notifications.argoproj.io/subscribe.on-health-degraded.slack: # Slack Chanel
-  #   notifications.argoproj.io/subscribe.on-sync-failed.slack: # Slack Chanel
+    # notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
 spec:
   destination:
     server: https://kubernetes.default.svc
-    # namespace: default
+    namespace: redis
   project: default
   source:
     chart: redis
@@ -23,6 +23,8 @@ spec:
       valuesObject:
         global:
           storageClass: "longhorn"
+        auth:
+          existingSecret: redis-secret-env
         master:
           persistence:
             storageClass: "longhorn"

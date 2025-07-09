@@ -12,9 +12,9 @@ data:
       id: gitlab
       name: GitLab
       config:
-        baseURL: http://192.168.242.46
+        baseURL: https://gitlab.com
         clientID: $argocd-config-credential:clientID
         clientSecret: $argocd-config-credential:clientSecret
         useLoginAsID: false
-  url: http://192.168.242.151:30945 # NodePort ArgoCD
+  url: http://argo-cd.futuresky.co.th
   # exec.enabled: "true" # Enable exec console

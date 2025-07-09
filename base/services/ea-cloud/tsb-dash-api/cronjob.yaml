@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: tsb-dash-api-cronjob
+spec:
+  schedule: "*/1 * * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 0
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          containers:
+            - name: tsb-dash-api
+              image: tsb-dash-api-image # Your custom Go image
+              command: ["/root/dashboard-cli", "call-api"]
+              envFrom:
+                - configMapRef:
+                    name: tsb-dash-api-config-env
+                - secretRef:
+                    name: tsb-dash-api-secret-env
+              # No command or args specified, so it will use the default command in the Docker image
+          restartPolicy: Never
+          terminationGracePeriodSeconds: 60
+          imagePullSecrets:
+            - name: gitlab-auth
+      ttlSecondsAfterFinished: 300

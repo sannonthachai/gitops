@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tsb-mw-fn
+  labels:
+    app: tsb-mw-fn
+spec:
+  type: ClusterIP
+  ports:
+  - name: http-port
+    port: 1323
+    targetPort: 1323
+  selector:
+    app: tsb-mw-fn

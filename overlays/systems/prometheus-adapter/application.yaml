@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus-adapter
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+    # notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  project: default
+  source:
+    chart: prometheus-adapter
+    repoURL: https://prometheus-community.github.io/helm-charts
+    targetRevision: 4.14.1
+    helm:
+      valuesObject:
+        prometheus:
+          # Value is templated
+          url: https://aom.ap-southeast-2.myhuaweicloud.com/v1/bad9ae4efa7b42189f8d289c4c6d938b/95e784c5-4a5d-42a3-875f-130f4903e3f9
+          port: 80
+        rules:
+          custom:
+            - seriesQuery: 'container_cpu_usage_seconds_total{namespace!="",pod!=""}'
+              seriesFilters: []
+              resources:
+                overrides:
+                  namespace:
+                    resource: namespace
+                  pod:
+                    resource: pod
+              name:
+                matches: "^(.*)_seconds_total"
+                as: "${1}_core_per_second"
+              metricsQuery: 'sum(rate(<<.Series>>{<<.LabelMatchers>>}[1m])) by (<<.GroupBy>>)'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true

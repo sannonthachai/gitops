@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ea-cloud
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+    notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
+    argocd-image-updater.argoproj.io/service1.kustomize.image-name: tsb-mw-fn/dev
+    argocd-image-updater.argoproj.io/service1.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/service1.allow-tags: regexp:.*
+    argocd-image-updater.argoproj.io/service2.kustomize.image-name: tsb-dash-api/dev
+    argocd-image-updater.argoproj.io/service2.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/service2.allow-tags: regexp:.*
+    argocd-image-updater.argoproj.io/service3.kustomize.image-name: tsb-dashboard/dev
+    argocd-image-updater.argoproj.io/service3.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/service3.allow-tags: regexp:.*
+    argocd-image-updater.argoproj.io/image-list: service1=registry.gitlab.com/ea-dev/tsb-mw-fn/dev, service2=registry.gitlab.com/ea-dev/tsb-dash-api/dev, service3=registry.gitlab.com/ea-dev/tsb-dashboard/dev
+    argocd-image-updater.argoproj.io/git-branch: dev
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: kustomization
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ea-cloud
+  project: default
+  source:
+    path: overlays/services/ea-cloud/overlay
+    repoURL: https://gitlab.com/ea-gitops/gitops-poc-huawei.git
+    targetRevision: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true
