@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kafka
+  name: kibana
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -13,33 +13,27 @@ metadata:
 spec:
   destination:
     server: https://kubernetes.default.svc
-    namespace: kafka
+    namespace: elasticsearch
   project: default
   source:
-    chart: kafka
-    repoURL: https://charts.bitnami.com/bitnami
-    targetRevision: 32.3.5
+    chart: kibana
+    repoURL: https://helm.elastic.co
+    targetRevision: 8.5.1
     helm:
       valuesObject:
-        overrideConfiguration:
-          offsets.topic.replication.factor: 1
-          transaction.state.log.replication.factor: 1
-          transaction.state.log.min.isr: 1
-        sasl:
-          existingSecret: "kafka-secret"
-        controller:
-          replicaCount: 1
-          resources:
-            requests:
-              cpu: 100m
-              memory: 1024Mi
-          persistence:
-            storageClass: "longhorn"
-            size: 3Gi
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "500Mi"
+        service:
+          type: NodePort
+          port: 5601
+          nodePort: "31105"
+          httpPortName: http
   syncPolicy:
     automated:
       prune: true
-      selfHeal: false
+      selfHeal: true
     syncOptions:
       - ServerSideApply=true
       - CreateNamespace=true

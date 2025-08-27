@@ -1,0 +1,75 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: promtail
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+    notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  project: default
+  source:
+    chart: promtail
+    repoURL: https://grafana.github.io/helm-charts
+    targetRevision: 6.17.0
+    helm:
+      valuesObject:
+        daemonset:
+          enabled: false
+        deployment:
+          enabled: true
+        extraArgs:
+          - "-config.expand-env=true"
+        extraEnvFrom:
+          - secretRef:
+              name: promtail-kafka-secret
+        config:
+          clients:
+            - url: http://loki:3100/loki/api/v1/push
+          snippets:
+            scrapeConfigs: |
+              - job_name: kafka-logs
+                kafka:
+                  assignor: sticky
+                  use_incoming_timestamp: true
+                  brokers:
+                    - kafka.kafka:9092
+                  group_id: "promtail"
+                  topics:
+                    - ea-logs
+                  labels:
+                    job: kafka-logs
+                    topic: ea-logs
+                  authentication:
+                    type: sasl
+                    sasl_config:
+                      mechanism: PLAIN
+                      user: user1
+                      password: ${KAFKA_PASSWORD}
+                pipeline_stages:
+                  - json:
+                      expressions:
+                        level: level
+                        msg: log
+                        ts: time
+                  - labels:
+                      level:
+                  - timestamp:
+                      source: ts
+                      format: RFC3339Nano
+                  - output:
+                      source: msg
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true

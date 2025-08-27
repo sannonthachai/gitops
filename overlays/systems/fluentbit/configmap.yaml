@@ -1,0 +1,81 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+data:
+  custom_parsers.conf: |
+    [PARSER]
+        Name docker_no_time
+        Format json
+        Time_Keep Off
+        Time_Key time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+  fluent-bit.conf: |
+    [SERVICE]
+        Daemon Off
+        Flush 1
+        Log_Level info
+        Parsers_File /fluent-bit/etc/parsers.conf
+        Parsers_File /fluent-bit/etc/conf/custom_parsers.conf
+        HTTP_Server On
+        HTTP_Listen 0.0.0.0
+        HTTP_Port 2020
+        Health_Check On
+        # Persist large buffers to disk (prevents keeping many files open)
+        storage.path /buffers
+        storage.backlog.mem_limit 64MB
+
+    [INPUT]
+        Name              tail
+        Path              /var/log/containers/*.log
+        Exclude_Path      */*-previous.log,*/init-*.log
+        multiline.parser  docker, cri
+        Tag               kube.*
+        # Keep memory modest; spill to disk when needed
+        Mem_Buf_Limit     5MB
+        Skip_Long_Lines   On
+        # Persist read offsets so files can be closed and reopened later
+        DB                /fluent-bit/state/flb_tail.db
+        DB.sync           normal
+        DB.locking        true
+        # Close files faster / reduce number of active FDs
+        Refresh_Interval  5
+        Rotate_Wait       30
+        Ignore_Older      2h
+        # Use filesystem storage for the tail input
+        storage.type      filesystem
+
+    [FILTER]
+        Name                  kubernetes
+        Match                 kube.*
+        Merge_Log             On
+        Keep_Log              Off
+        K8S-Logging.Parser    On
+        K8S-Logging.Exclude   On
+
+    [OUTPUT]
+        Name kafka
+        Match kube.*
+        Brokers kafka.kafka:9092
+        Topics ea-logs
+        Retry_Limit False
+        Timestamp_Key @timestamp
+        rdkafka.log.connection.close false
+        rdkafka.security.protocol sasl_plaintext
+        rdkafka.sasl.mechanism PLAIN
+        rdkafka.sasl.username user1
+        rdkafka.sasl.password 
+        rdkafka.compression.codec lz4
+kind: ConfigMap
+metadata:
+  annotations:
+    argocd.argoproj.io/tracking-id: fluent-bit:/ConfigMap:fluent-bit/fluent-bit
+  labels:
+    app.kubernetes.io/instance: fluent-bit
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: fluent-bit
+    app.kubernetes.io/version: 4.0.3
+    helm.sh/chart: fluent-bit-0.50.0
+  name: fluent-bit-config
+  namespace: fluent-bit
