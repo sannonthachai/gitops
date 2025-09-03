@@ -17,7 +17,7 @@ data:
         Flush 1
         Log_Level info
         Parsers_File /fluent-bit/etc/parsers.conf
-        Parsers_File /fluent-bit/etc/conf/custom_parsers.conf
+        Parsers_File /fluent-bit/etc/custom_parsers.conf
         HTTP_Server On
         HTTP_Listen 0.0.0.0
         HTTP_Port 2020
@@ -25,6 +25,12 @@ data:
         # Persist large buffers to disk (prevents keeping many files open)
         storage.path /buffers
         storage.backlog.mem_limit 64MB
+
+    [INPUT]
+        name            kubernetes_events
+        tag             k8s_events
+        kube_url        https://kubernetes.default.svc
+        DB              /fluent-bit/state/k8s_events.db
 
     [INPUT]
         Name              tail
@@ -59,6 +65,21 @@ data:
         Match kube.*
         Brokers kafka.kafka:9092
         Topics ea-logs
+        Retry_Limit False
+        Timestamp_Key @timestamp
+        rdkafka.log.connection.close false
+        rdkafka.security.protocol sasl_plaintext
+        rdkafka.sasl.mechanism PLAIN
+        rdkafka.sasl.username user1
+        rdkafka.sasl.password 
+        rdkafka.compression.codec lz4
+
+    [OUTPUT]
+        Name kafka
+        Alias  kafka-events
+        Match k8s_events
+        Brokers kafka.kafka:9092
+        Topics k8s-event
         Retry_Limit False
         Timestamp_Key @timestamp
         rdkafka.log.connection.close false
