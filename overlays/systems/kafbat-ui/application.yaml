@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: elasticsearch
+  name: kafbat-ui
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -13,25 +13,27 @@ metadata:
 spec:
   destination:
     server: https://kubernetes.default.svc
-    namespace: elasticsearch
+    namespace: kafka
   project: default
   source:
-    chart: elasticsearch
-    repoURL: https://helm.elastic.co
-    targetRevision: 8.5.1
+    chart: kafka-ui
+    repoURL: https://ui.charts.kafbat.io
+    targetRevision: 1.5.1
     helm:
       valuesObject:
-        replicas: 1
-        minimumMasterNodes: 1
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "1Gi"
-        volumeClaimTemplate:
-          storageClassName: "longhorn" 
-          resources:
-            requests:
-              storage: 10Gi
+        yamlApplicationConfig:
+          kafka:
+            clusters:
+              - name: local
+                bootstrapServers:  kafka:9092
+                properties:
+                  security.protocol: SASL_PLAINTEXT
+                  sasl.mechanism: PLAIN
+        service:
+            type: NodePort
+            nodePort: 31841
+            port: 80
+            targetPort: http
   syncPolicy:
     automated:
       prune: true

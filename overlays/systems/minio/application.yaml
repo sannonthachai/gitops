@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+    notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: minio
+  project: default
+  source:
+    chart: minio
+    repoURL: https://charts.bitnami.com/bitnami
+    targetRevision: 17.0.21
+    helm:
+      valuesObject:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+        persistence:
+          storageClass: "longhorn"
+          size: 2Gi
+        console:
+          service:
+            type: NodePort
+            nodePorts:
+              http: "31765"
+        # provisioning:
+        #   extraCommands:
+        #     - |
+        #       #!/bin/bash
+        #       set -e
+        #       mc alias set myminio http://localhost:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD
+        #       for bucket in $(mc ls myminio | awk '{print $5}'); do
+        #         # Apply lifecycle rule: expire all objects after 3 days
+        #         mc ilm add myminio/$bucket --expiry-days 3
+        #       done
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true

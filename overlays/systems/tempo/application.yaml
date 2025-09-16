@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kowl
+  name: tempo
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -13,33 +13,27 @@ metadata:
 spec:
   destination:
     server: https://kubernetes.default.svc
-    namespace: kafka
+    namespace: monitoring
   project: default
   source:
-    chart: kowl
-    repoURL: https://raw.githubusercontent.com/cloudhut/charts/master/archives
-    targetRevision: 2.3.1
+    chart: tempo
+    repoURL: https://grafana.github.io/helm-charts
+    targetRevision: 1.23.3
     helm:
       valuesObject:
-        kowl:
-          config:
-            kafka:
-              brokers:
-                - kafka:9092
-              sasl:
-                enabled: true
-                username: user1
-        secret:
-          existingSecret: kowl-secret
-        service:
-            type: NodePort
-            nodePort: 32767
-            port: 80
-            targetPort: http
+        tempo:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
+        persistence:
+          enabled: true
+          storageClassName: "longhorn"
+          size: 3Gi
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true
+      selfHeal: false
     syncOptions:
       - ServerSideApply=true
       - CreateNamespace=true

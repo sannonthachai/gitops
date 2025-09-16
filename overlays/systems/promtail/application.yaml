@@ -59,6 +59,47 @@ spec:
                         level: level
                         msg: log
                         ts: time
+                        trace_id: trace_id
+                        span_id: span_id
+                        namespace: kubernetes.namespace_name
+                        pod: kubernetes.pod_name
+                        app: kubernetes.labels.app
+                  - labels:
+                      app:
+                      namespace:
+                      pod:
+                      level:
+                      trace_id:
+                      span_id:
+                  - timestamp:
+                      source: ts
+                      format: RFC3339Nano
+                  - output:
+                      source: msg
+              - job_name: kafka-event
+                kafka:
+                  assignor: sticky
+                  use_incoming_timestamp: true
+                  brokers:
+                    - kafka.kafka:9092
+                  group_id: "promtail-event"
+                  topics:
+                    - k8s-event
+                  labels:
+                    job: kafka-event
+                    topic: k8s-event
+                  authentication:
+                    type: sasl
+                    sasl_config:
+                      mechanism: PLAIN
+                      user: user1
+                      password: ${KAFKA_PASSWORD}
+                pipeline_stages:
+                  - json:
+                      expressions:
+                        level: level
+                        msg: log
+                        ts: time
                   - labels:
                       level:
                   - timestamp:
@@ -69,7 +110,7 @@ spec:
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true
+      selfHeal: false
     syncOptions:
       - ServerSideApply=true
       - CreateNamespace=true

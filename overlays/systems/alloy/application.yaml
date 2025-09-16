@@ -1,0 +1,85 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: alloy
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+    notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  project: default
+  source:
+    chart: alloy
+    repoURL: https://grafana.github.io/helm-charts
+    targetRevision: 1.2.1
+    helm:
+      valuesObject:
+        controller:
+          type: "deployment"
+          replicas: 1
+        # Expose OTLP ports on the Service created by the chart
+        alloy:
+          extraPorts:
+            - name: otlp-grpc
+              port: 4317
+              targetPort: 4317
+              protocol: TCP
+            - name: otlp-http
+              port: 4318
+              targetPort: 4318
+              protocol: TCP
+          # River config that makes Alloy receive OTLP and forward traces
+          configMap:
+            content: |-
+              logging {
+                level  = "info"
+                format = "logfmt"
+              }
+              // Receive OpenTelemetry over gRPC (4317) and HTTP (4318)
+              otelcol.receiver.otlp "ingest" {
+                grpc { endpoint = "0.0.0.0:4317" }
+                http { endpoint = "0.0.0.0:4318" }
+                // Send to processors (traces only; disable metrics/logs if you don't need them)
+                output {
+                  traces  = [otelcol.processor.memory_limiter.traces.input]
+                  metrics = []
+                  logs    = []
+                }
+              }
+              // Keep Alloy stable under load
+              otelcol.processor.memory_limiter "traces" {
+                check_interval = "1s"
+                limit          = "1GiB"
+                output {
+                  traces = [otelcol.processor.batch.traces.input]
+                }
+              }
+              // Batch for better compression + fewer requests
+              otelcol.processor.batch "traces" {
+                output {
+                  traces = [otelcol.exporter.otlp.tempo.input]
+                }
+              }
+              otelcol.exporter.otlp "tempo" {
+                client {
+                  endpoint = "tempo:4317"
+                  tls {
+                    insecure             = true
+                    insecure_skip_verify = true
+                  }
+                }
+              }
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true
