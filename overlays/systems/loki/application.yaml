@@ -21,8 +21,6 @@ spec:
     targetRevision: 6.36.1
     helm:
       valuesObject:
-        lokiCanary:
-          enabled: false
         global:
           extraArgs:
             - "-config.expand-env=true"
