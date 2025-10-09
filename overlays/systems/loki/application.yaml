@@ -63,7 +63,7 @@ spec:
             s3:
               endpoint: "http://minio.minio:9000"
               region: "us-east-1" 
-              s3ForcePathStyle: true
+              s3ForcePathStyle: true # set to false when use obs huawei
               insecure: true
               accessKeyId: ${MINIO_ACCESS_KEY}
               secretAccessKey: ${MINIO_SECRET_KEY}

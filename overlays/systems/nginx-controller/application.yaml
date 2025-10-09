@@ -24,10 +24,14 @@ spec:
         controller:
           replicaCount: 1
           minAvailable: 1
+          admissionWebhooks:
+            enabled: true
+            patch:
+              enabled: true
           service:
             annotations:
               kubernetes.io/elb.id: 787bbcde-a14a-460b-a2b3-4a03aeff6efc
-              kubernetes.io/elb.class: performance
+              kubernetes.io/elb.class: performance # use union if elb type shared
   syncPolicy:
     automated:
       prune: true

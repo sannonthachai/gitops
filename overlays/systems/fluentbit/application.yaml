@@ -21,6 +21,13 @@ spec:
     targetRevision: 0.50.0
     helm:
       valuesObject:
+        # env:
+        #   - name: NODE_IP
+        #     valueFrom:
+        #       fieldRef:
+        #         fieldPath: status.hostIP
+        # hostNetwork: true
+        # dnsPolicy: ClusterFirstWithHostNet
         existingConfigMap: "fluent-bit-config"
         # Mount writable paths used by your config
         extraVolumes:
@@ -29,12 +36,24 @@ spec:
           - name: fluentbit-buffers
             emptyDir:
               sizeLimit: 1Gi
+          # - name: varlog-containers
+          #   hostPath:
+          #     path: /var/log/containers
+          # - name: varlog-pods
+          #   hostPath:
+          #     path: /var/log/pods
 
         extraVolumeMounts:
           - name: fluentbit-state
             mountPath: /fluent-bit/state
           - name: fluentbit-buffers
             mountPath: /buffers
+          # - name: varlog-containers
+          #   mountPath: /var/log/containers
+          #   readOnly: true
+          # - name: varlog-pods
+          #   mountPath: /var/log/pods
+          #   readOnly: true
   syncPolicy:
     automated:
       prune: true
