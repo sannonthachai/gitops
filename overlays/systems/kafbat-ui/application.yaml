@@ -7,13 +7,13 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/compare-options: ServerSideDiff=true
-    notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
-    notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
-    notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
 spec:
   destination:
     server: https://kubernetes.default.svc
-    namespace: kafka
+    # namespace: kafka
   project: default
   source:
     chart: kafka-ui
@@ -29,11 +29,7 @@ spec:
                 properties:
                   security.protocol: SASL_PLAINTEXT
                   sasl.mechanism: PLAIN
-        service:
-            type: NodePort
-            nodePort: 31841
-            port: 80
-            targetPort: http
+                  # sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="" password=""; For sasl
   syncPolicy:
     automated:
       prune: true

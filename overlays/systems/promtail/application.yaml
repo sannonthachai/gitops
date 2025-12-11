@@ -40,13 +40,13 @@ spec:
                   assignor: sticky
                   use_incoming_timestamp: true
                   brokers:
-                    - kafka.kafka:9092
-                  group_id: "promtail"
+                    - kafka-controller-headless.default:9092
+                  group_id: "promtail-logs"
                   topics:
-                    - ea-logs
+                    - k8s-logs
                   labels:
                     job: kafka-logs
-                    topic: ea-logs
+                    topic: k8s-logs
                   authentication:
                     type: sasl
                     sasl_config:
@@ -76,18 +76,18 @@ spec:
                       format: RFC3339Nano
                   - output:
                       source: msg
-              - job_name: kafka-event
+              - job_name: kafka-events
                 kafka:
                   assignor: sticky
                   use_incoming_timestamp: true
                   brokers:
-                    - kafka.kafka:9092
+                    - kafka-controller-headless.default:9092
                   group_id: "promtail-event"
                   topics:
-                    - k8s-event
+                    - k8s-events
                   labels:
-                    job: kafka-event
-                    topic: k8s-event
+                    job: kafka-events
+                    topic: k8s-events
                   authentication:
                     type: sasl
                     sasl_config:

@@ -3,3 +3,6 @@ kind: Kustomization
 
 resources:
 - application.yaml
+- sa.yaml
+- vault-script-secret.yaml
+- cronjob.yaml

@@ -28,7 +28,7 @@ spec:
               memory: 500Mi
         persistence:
           enabled: true
-          storageClassName: "longhorn"
+          storageClassName: "csi-disk"
           size: 3Gi
   syncPolicy:
     automated:

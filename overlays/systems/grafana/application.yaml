@@ -7,9 +7,9 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/compare-options: ServerSideDiff=true
-    notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
-    notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
-    notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-deployed.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-health-degraded.slack: ea-cloud-argo-cd-status
+    # notifications.argoproj.io/subscribe.on-sync-failed.slack: ea-cloud-argo-cd-status
 spec:
   destination:
     server: https://kubernetes.default.svc
@@ -21,17 +21,14 @@ spec:
     targetRevision: 9.3.2
     helm:
       valuesObject:
-        service:
-          type: NodePort
-          nodePort: "31115"
         persistence:
           enabled: true
           size: 2Gi
-          storageClassName: "longhorn" 
+          storageClassName: "csi-disk" 
         resource:
           requests:
-            cpu: "100m"
-            memory: "500Mi"
+            cpu: "50m"
+            memory: "200Mi"
   syncPolicy:
     automated:
       prune: true

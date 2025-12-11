@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redisinsight #deployment name
+  labels:
+    app: redisinsight #deployment label
+spec:
+  replicas: 1 #a single replica pod
+  selector:
+    matchLabels:
+      app: redisinsight #which pods is the deployment managing, as defined by the pod template
+  template: #pod template
+    metadata:
+      labels:
+        app: redisinsight #label for pod/s
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet

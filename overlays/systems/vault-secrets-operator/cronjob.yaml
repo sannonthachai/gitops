@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: renew-token-reviewer-jwt
+  namespace: vault-secrets-operator-system
+spec:
+  schedule: "0 */6 * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          hostNetwork: true
+          dnsPolicy: ClusterFirstWithHostNet
+          serviceAccountName: vault-renewer-sa
+          restartPolicy: Never
+          containers:
+          - name: renewer
+            image: bitnami/kubectl:latest
+            command:
+              - /bin/bash
+              - -c
+              - |
+                cp /script/vault.sh /tmp/vault.sh
+                chmod +x /tmp/vault.sh
+                /tmp/vault.sh
+
+            env:
+            - name: VAULT_ADDR
+              valueFrom:
+                secretKeyRef:
+                  name: vault-config-secret
+                  key: VAULT_ADDR
+
+            - name: VAULT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: vault-config-secret
+                  key: VAULT_TOKEN
+
+            - name: K8S_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: vault-config-secret
+                  key: K8S_HOST
+
+            volumeMounts:
+            - name: vault-script
+              mountPath: /script
+              readOnly: true
+
+          volumes:
+          - name: vault-script
+            secret:
+              secretName: vault-script-secret

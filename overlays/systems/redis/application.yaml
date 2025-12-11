@@ -22,18 +22,16 @@ spec:
     helm:
       valuesObject:
         global:
-          storageClass: "longhorn"
-        auth:
-          existingSecret: redis-secret-env
+          storageClass: "csi-disk"
         master:
           persistence:
-            storageClass: "longhorn"
-            size: 2Gi
+            storageClass: "csi-disk"
+            size: 3Gi
         replica:
-          replicaCount: 2
+          replicaCount: 1
           persistence:
-            storageClass: "longhorn"
-            size: 2Gi
+            storageClass: "csi-disk"
+            size: 3Gi
   syncPolicy:
     automated:
       prune: true

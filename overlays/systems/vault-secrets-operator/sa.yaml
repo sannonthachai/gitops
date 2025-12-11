@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vso-sa
+  namespace: vault-secrets-operator-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vso-sa-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+  name: vso-sa
+  namespace: vault-secrets-operator-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault-renewer-sa
+  namespace: vault-secrets-operator-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: vault-renewer-role
+  namespace: vault-secrets-operator-system
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get"]
+
+- apiGroups: [""]
+  resources: ["serviceaccounts/token"]
+  verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: vault-renewer-role-kube-system
+  namespace: kube-system
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: vault-renewer-rolebinding
+  namespace: vault-secrets-operator-system
+subjects:
+- kind: ServiceAccount
+  name: vault-renewer-sa
+roleRef:
+  kind: Role
+  name: vault-renewer-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: vault-renewer-rolebinding-kube-system
+  namespace: kube-system
+subjects:
+- kind: ServiceAccount
+  name: vault-renewer-sa
+  namespace: vault-secrets-operator-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: vault-renewer-role-kube-system
